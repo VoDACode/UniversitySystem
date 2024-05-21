@@ -17,5 +17,6 @@ namespace University.API.Models
         public ICollection<UserModel> Students { get; set; } = new List<UserModel>();
         public ICollection<LessonModel> Lessons { get; set; } = new List<LessonModel>();
         public ICollection<TaskModel> Tasks { get; set; } = new List<TaskModel>();
+        public ICollection<CourseModel> Courses { get; set; } = new List<CourseModel>();
     }
 }

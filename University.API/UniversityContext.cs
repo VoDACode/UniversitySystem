@@ -41,6 +41,66 @@ namespace University.API
             modelBuilder.Entity<CourseModel>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.Groups)
+                .WithMany(g => g.Students)
+                .UsingEntity(j => j.ToTable("UserGroup"));
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.TaskAnswers)
+                .WithOne(ta => ta.Student)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.Tasks)
+                .WithOne(t => t.Teacher)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.Lessons)
+                .WithOne(l => l.Teacher)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.Files)
+                .WithOne(f => f.Owner)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.TeachGroups)
+                .WithOne(g => g.Teacher)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GroupModel>()
+                .HasMany(g => g.Lessons)
+                .WithOne(l => l.Group)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GroupModel>()
+                .HasMany(g => g.Tasks)
+                .WithOne(t => t.Group)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CourseModel>()
+                .HasMany(c => c.Lessons)
+                .WithOne(l => l.Course)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CourseModel>()
+                .HasMany(c => c.Tasks)
+                .WithOne(t => t.Course)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CourseModel>()
+                .HasMany(c => c.Groups)
+                .WithMany(g => g.Courses)
+                .UsingEntity(j => j.ToTable("GroupCourse"));
+
+            modelBuilder.Entity<TaskAnswerModel>()
+                .HasMany(ta => ta.Files)
+                .WithOne(f => f.TaskAnswer)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

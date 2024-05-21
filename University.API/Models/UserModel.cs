@@ -24,8 +24,10 @@ namespace University.API.Models
         public string Phone { get; set; } = null!;
 
         public ICollection<GroupModel> Groups { get; set; } = new List<GroupModel>();
+        public ICollection<GroupModel> TeachGroups { get; set; } = new List<GroupModel>();
         public ICollection<TaskAnswerModel> TaskAnswers { get; set; } = new List<TaskAnswerModel>();
         public ICollection<LessonModel> Lessons { get; set; } = new List<LessonModel>();
         public ICollection<TaskModel> Tasks { get; set; } = new List<TaskModel>();
+        public ICollection<FileModel> Files { get; set; } = new List<FileModel>();
     }
 }

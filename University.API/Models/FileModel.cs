@@ -13,5 +13,8 @@ namespace University.API.Models
         [Required]
         public int OwnerId { get; set; }
         public UserModel Owner { get; set; } = null!;
+
+        public int? TaskAnswerId { get; set; }
+        public TaskAnswerModel? TaskAnswer { get; set; }
     }
 }

@@ -16,6 +16,6 @@ namespace University.API.Models
         public DateTime? MarkedAt { get; set; }
         public int? TeacherId { get; set; }
         public UserModel? Teacher { get; set; }
-        public IEnumerable<FileModel> Files { get; set; } = new List<FileModel>();
+        public ICollection<FileModel> Files { get; set; } = new List<FileModel>();
     }
 }
