@@ -5,6 +5,7 @@ using University.Domain.Entity.Group.Responses;
 using University.Domain.Entity.Lesson.Responses;
 using University.Domain.Entity.Task.Responses;
 using University.Domain.Entity.User.Responses;
+using University.Domain.Requests;
 using University.Domain.Responses;
 using University.Domain.Services;
 
@@ -25,9 +26,9 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<IList<GroupResponse>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponse<>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(BaseResponse<>))]
-        public async Task<IActionResult> GetGroups()
+        public async Task<IActionResult> GetGroups([FromQuery] PageRequest request)
         {
-            return await ExecuteAsync(_groupService.GetGroups);
+            return await ExecuteAsync(async () => await _groupService.GetGroups(request));
         }
 
         [HttpGet("{id}")]

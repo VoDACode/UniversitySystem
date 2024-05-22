@@ -16,6 +16,8 @@ namespace University.Domain.Entity.TaskAnswer
         public int StudentId { get; set; }
         public UserEntity Student { get; set; } = null!;
         public int? Mark { get; set; } = null;
+        [MaxLength(512)]
+        public string Feedback { get; set; } = null!;
         public DateTime? MarkedAt { get; set; } = null;
         public int? TeacherId { get; set; } = null;
         public UserEntity? Teacher { get; set; } = null; 

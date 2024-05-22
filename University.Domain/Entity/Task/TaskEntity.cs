@@ -26,7 +26,7 @@ namespace University.Domain.Entity.Task
         public int TeacherId { get; set; }
         public UserEntity Teacher { get; set; } = null!;
         public DateTime? Deadline { get; set; } = null;
-        public int MaxScore { get; set; } = 0;
+        public int MaxMark { get; set; } = 0;
         public int MaxFiles { get; set; } = 0;
         public bool CanUpdate { get; set; } = false;
 

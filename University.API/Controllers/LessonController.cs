@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using University.Domain.Entity.Lesson.Requests;
 using University.Domain.Entity.Lesson.Responses;
+using University.Domain.Requests;
 using University.Domain.Responses;
 using University.Domain.Services;
 
@@ -22,9 +23,9 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<IEnumerable<LessonResponse>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponse<>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(BaseResponse<>))]
-        public async Task<IActionResult> GetLessons()
+        public async Task<IActionResult> GetLessons([FromQuery] PageRequest request)
         {
-            return await ExecuteAsync(_lessonService.GetLessons);
+            return await ExecuteAsync(async () => await _lessonService.GetLessons(request));
         }
 
         [HttpGet("{id}")]

@@ -22,7 +22,7 @@
             GroupId = entity.GroupId;
             TeacherId = entity.TeacherId;
             Deadline = entity.Deadline;
-            MaxScore = entity.MaxScore;
+            MaxScore = entity.MaxMark;
             MaxFiles = entity.MaxFiles;
             CanUpdate = entity.CanUpdate;
         }

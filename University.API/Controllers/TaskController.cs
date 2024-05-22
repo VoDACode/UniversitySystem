@@ -2,6 +2,7 @@
 using University.Domain.Entity.Task.Requests;
 using University.Domain.Entity.Task.Responses;
 using University.Domain.Entity.TaskAnswer.Responses;
+using University.Domain.Requests;
 using University.Domain.Responses;
 using University.Domain.Services;
 
@@ -22,9 +23,9 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<IList<TaskResponse>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponse<>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(BaseResponse<>))]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] PageRequest request)
         {
-            return await ExecuteAsync(_taskService.GetTasks);
+            return await ExecuteAsync(async () => await _taskService.GetTasks(request));
         }
 
         [HttpGet("{id}")]

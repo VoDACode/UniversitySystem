@@ -16,7 +16,7 @@ namespace University.Domain.Entity.File
         public int OwnerId { get; set; }
         public UserEntity Owner { get; set; } = null!;
 
-        public int? TaskAnswerId { get; set; }
-        public TaskAnswerEntity? TaskAnswer { get; set; }
+        public int TaskAnswerId { get; set; }
+        public TaskAnswerEntity TaskAnswer { get; set; } = null!;
     }
 }

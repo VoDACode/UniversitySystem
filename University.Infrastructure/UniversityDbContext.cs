@@ -7,9 +7,9 @@ using University.Domain.Entity.Task;
 using University.Domain.Entity.TaskAnswer;
 using University.Domain.Entity.User;
 
-namespace University.API
+namespace University.Infrastructure
 {
-    public class UniversityContext : DbContext
+    public class UniversityDbContext : DbContext
     {
         public DbSet<UserEntity> Users { get; set; } = null!;
         public DbSet<GroupEntity> Groups { get; set; } = null!;
@@ -19,7 +19,7 @@ namespace University.API
         public DbSet<TaskAnswerEntity> TaskAnswers { get; set; } = null!;
         public DbSet<FileEntity> Files { get; set; } = null!;
 
-        public UniversityContext(DbContextOptions<UniversityContext> options) : base(options)
+        public UniversityDbContext(DbContextOptions<UniversityDbContext> options) : base(options)
         {
             Database.EnsureCreated();
         }

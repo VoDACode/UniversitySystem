@@ -4,13 +4,15 @@ using University.Domain.Entity.Group.Responses;
 using University.Domain.Entity.Lesson.Responses;
 using University.Domain.Entity.Task.Responses;
 using University.Domain.Entity.User.Responses;
+using University.Domain.Requests;
+using University.Domain.Responses;
 
 namespace University.Domain.Services
 {
     public interface IGroupService
     {
         Task<GroupResponse> GetGroup(int id);
-        Task<IList<GroupResponse>> GetGroups();
+        Task<PageResponse<GroupResponse>> GetGroups(PageRequest request);
         Task<IList<UserResponse>> GetStudentsFromGroup(int id);
         Task<IList<LessonResponse>> GetLessonsFromGroup(int id);
         Task<IList<TaskResponse>> GetTasksFromGroup(int id);

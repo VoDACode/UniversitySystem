@@ -9,5 +9,10 @@ namespace University.Domain.Entity.Course.Responses
         {
             Groups = course.Groups.Select(g => new GroupResponse(g));
         }
+
+        public static implicit operator CourseGroupsResponse(CourseEntity course)
+        {
+            return new CourseGroupsResponse(course);
+        }
     }
 }

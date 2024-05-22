@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using University.Domain.Entity.Course.Requests;
 using University.Domain.Entity.Course.Responses;
+using University.Domain.Requests;
 using University.Domain.Responses;
 using University.Domain.Services;
 
@@ -20,9 +21,9 @@ namespace University.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<IList<CourseResponse>>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(BaseResponse<>))]
-        public async Task<IActionResult> GetAllCourses()
+        public async Task<IActionResult> GetAllCourses([FromQuery] PageRequest request)
         {
-            return await ExecuteAsync(_courseService.GetAllCourses);
+            return await ExecuteAsync(async () => await _courseService.GetCourses(request));
         }
 
         [HttpGet("{id}")]
