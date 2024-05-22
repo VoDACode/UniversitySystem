@@ -1,0 +1,16 @@
+﻿using University.Domain.Entity.Task.Requests;
+using University.Domain.Entity.Task.Responses;
+using University.Domain.Entity.TaskAnswer.Responses;
+
+namespace University.Domain.Services
+{
+    public interface ITaskService
+    {
+        Task<TaskResponse> GetTask(int id);
+        Task<IEnumerable<TaskResponse>> GetTasks();
+        Task<IEnumerable<TaskAnswerResponse>> GetTaskAnswersFromTask(int id);
+        Task<TaskResponse> CreateTask(CreateTaskRequest request);
+        Task<TaskResponse> UpdateTask(int id, UpdateTaskRequest request);
+        Task DeleteTask(int id);
+    }
+}

@@ -1,20 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace University.API.Models
+namespace University.Domain.Entity.Lesson.Requests
 {
-    public class LessonModel
+    public class CreateLessonRequest
     {
-        [Key]
-        public int Id { get; set; }
+        [Required]
+        [StringLength(256)]
+        public string Name { get; set; } = null!;
+        [StringLength(1024)]
+        public string? Description { get; set; }
         [Required]
         public int GroupId { get; set; }
-        public GroupModel Group { get; set; } = null!;
         [Required]
         public int CourseId { get; set; }
-        public CourseModel Course { get; set; } = null!;
         [Required]
         public int TeacherId { get; set; }
-        public UserModel Teacher { get; set; } = null!;
         [Required]
         public DateOnly Date { get; set; }
         [Required]

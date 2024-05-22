@@ -1,8 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using University.Domain.Entity.Course;
+using University.Domain.Entity.Group;
+using University.Domain.Entity.TaskAnswer;
+using University.Domain.Entity.User;
 
-namespace University.API.Models
+namespace University.Domain.Entity.Task
 {
-    public class TaskModel
+    public class TaskEntity
     {
         [Key]
         public int Id { get; set; }
@@ -14,17 +18,18 @@ namespace University.API.Models
         public string Content { get; set; } = null!;
         [Required]
         public int CourseId { get; set; }
-        public CourseModel Course { get; set; } = null!;
+        public CourseEntity Course { get; set; } = null!;
         [Required]
         public int GroupId { get; set; }
-        public GroupModel Group { get; set; } = null!;
+        public GroupEntity Group { get; set; } = null!;
         [Required]
         public int TeacherId { get; set; }
-        public UserModel Teacher { get; set; } = null!;
+        public UserEntity Teacher { get; set; } = null!;
         public DateTime? Deadline { get; set; } = null;
         public int MaxScore { get; set; } = 0;
         public int MaxFiles { get; set; } = 0;
+        public bool CanUpdate { get; set; } = false;
 
-        public ICollection<TaskAnswerModel> TaskAnswers { get; set; } = new List<TaskAnswerModel>();
+        public ICollection<TaskAnswerEntity> TaskAnswers { get; set; } = new List<TaskAnswerEntity>();
     }
 }

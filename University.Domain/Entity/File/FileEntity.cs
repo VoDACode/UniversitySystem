@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using University.Domain.Entity.TaskAnswer;
+using University.Domain.Entity.User;
 
-namespace University.API.Models
+namespace University.Domain.Entity.File
 {
-    public class FileModel
+    public class FileEntity
     {
         [Key]
         public long Id { get; set; }
@@ -12,9 +14,9 @@ namespace University.API.Models
         public long Size { get; set; } = 0;
         [Required]
         public int OwnerId { get; set; }
-        public UserModel Owner { get; set; } = null!;
+        public UserEntity Owner { get; set; } = null!;
 
         public int? TaskAnswerId { get; set; }
-        public TaskAnswerModel? TaskAnswer { get; set; }
+        public TaskAnswerEntity? TaskAnswer { get; set; }
     }
 }

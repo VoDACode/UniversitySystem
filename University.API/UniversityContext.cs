@@ -1,17 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using University.API.Models;
+using University.Domain.Entity.Course;
+using University.Domain.Entity.File;
+using University.Domain.Entity.Group;
+using University.Domain.Entity.Lesson;
+using University.Domain.Entity.Task;
+using University.Domain.Entity.TaskAnswer;
+using University.Domain.Entity.User;
 
 namespace University.API
 {
     public class UniversityContext : DbContext
     {
-        public DbSet<UserModel> Users { get; set; } = null!;
-        public DbSet<GroupModel> Groups { get; set; } = null!;
-        public DbSet<LessonModel> Lessons { get; set; } = null!;
-        public DbSet<CourseModel> Courses { get; set; } = null!;
-        public DbSet<TaskModel> Tasks { get; set; } = null!;
-        public DbSet<TaskAnswerModel> TaskAnswers { get; set; } = null!;
-        public DbSet<FileModel> Files { get; set; } = null!;
+        public DbSet<UserEntity> Users { get; set; } = null!;
+        public DbSet<GroupEntity> Groups { get; set; } = null!;
+        public DbSet<LessonEntity> Lessons { get; set; } = null!;
+        public DbSet<CourseEntity> Courses { get; set; } = null!;
+        public DbSet<TaskEntity> Tasks { get; set; } = null!;
+        public DbSet<TaskAnswerEntity> TaskAnswers { get; set; } = null!;
+        public DbSet<FileEntity> Files { get; set; } = null!;
 
         public UniversityContext(DbContextOptions<UniversityContext> options) : base(options)
         {
@@ -20,84 +26,89 @@ namespace University.API
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasIndex(u => u.TaxId)
                 .IsUnique();
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasIndex(u => u.Phone)
                 .IsUnique();
 
-            modelBuilder.Entity<GroupModel>()
+            modelBuilder.Entity<GroupEntity>()
                 .HasIndex(g => g.Name)
                 .IsUnique();
 
-            modelBuilder.Entity<TaskAnswerModel>()
+            modelBuilder.Entity<TaskAnswerEntity>()
                 .HasIndex(ta => new { ta.TaskId, ta.StudentId })
                 .IsUnique();
 
-            modelBuilder.Entity<CourseModel>()
+            modelBuilder.Entity<CourseEntity>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(u => u.Groups)
                 .WithMany(g => g.Students)
                 .UsingEntity(j => j.ToTable("UserGroup"));
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(u => u.TaskAnswers)
                 .WithOne(ta => ta.Student)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
+                .HasMany(u => u.CheckedTaskAnswers)
+                .WithOne(ta => ta.Teacher)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(u => u.Tasks)
                 .WithOne(t => t.Teacher)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(u => u.Lessons)
                 .WithOne(l => l.Teacher)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(u => u.Files)
                 .WithOne(f => f.Owner)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserModel>()
+            modelBuilder.Entity<UserEntity>()
                 .HasMany(u => u.TeachGroups)
                 .WithOne(g => g.Teacher)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<GroupModel>()
+            modelBuilder.Entity<GroupEntity>()
                 .HasMany(g => g.Lessons)
                 .WithOne(l => l.Group)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<GroupModel>()
+            modelBuilder.Entity<GroupEntity>()
                 .HasMany(g => g.Tasks)
                 .WithOne(t => t.Group)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CourseModel>()
+            modelBuilder.Entity<CourseEntity>()
                 .HasMany(c => c.Lessons)
                 .WithOne(l => l.Course)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CourseModel>()
+            modelBuilder.Entity<CourseEntity>()
                 .HasMany(c => c.Tasks)
                 .WithOne(t => t.Course)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CourseModel>()
+            modelBuilder.Entity<CourseEntity>()
                 .HasMany(c => c.Groups)
                 .WithMany(g => g.Courses)
                 .UsingEntity(j => j.ToTable("GroupCourse"));
 
-            modelBuilder.Entity<TaskAnswerModel>()
+            modelBuilder.Entity<TaskAnswerEntity>()
                 .HasMany(ta => ta.Files)
                 .WithOne(f => f.TaskAnswer)
                 .OnDelete(DeleteBehavior.Restrict);
