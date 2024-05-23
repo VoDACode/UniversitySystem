@@ -44,7 +44,7 @@ namespace University.Application.Services
                 createdTaskAnswer.Files.Add(fileEntity);
             }
 
-            return createdTaskAnswer;
+            return await taskAnswerRepository.UpdateTaskAnswer(createdTaskAnswer);
         }
 
         public async Task DeleteTaskAnswer(int id)

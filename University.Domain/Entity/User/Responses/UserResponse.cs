@@ -19,6 +19,10 @@ namespace University.Domain.Entity.User.Responses
             RoleName = user.Role.ToString();
         }
 
+        public UserResponse()
+        {
+        }
+
         public static implicit operator UserResponse(UserEntity user)
         {
             return new UserResponse(user);

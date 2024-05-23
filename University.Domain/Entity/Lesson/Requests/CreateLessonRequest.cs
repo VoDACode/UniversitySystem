@@ -16,7 +16,7 @@ namespace University.Domain.Entity.Lesson.Requests
         [Required]
         public int TeacherId { get; set; }
         [Required]
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
         [Required]
         public TimeSpan StartTime { get; set; }
         [Required]

@@ -44,6 +44,7 @@ namespace University.Infrastructure.Repositores
         {
             var task = await context.Tasks
                 .Include(t => t.TaskAnswers)
+                .ThenInclude(ta => ta.Files)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null) throw new NotFoundException("Task not found");

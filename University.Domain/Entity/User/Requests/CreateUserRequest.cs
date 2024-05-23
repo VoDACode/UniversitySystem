@@ -11,7 +11,7 @@ namespace University.Domain.Entity.User.Requests
         [MaxLength(64)]
         public string LastName { get; set; } = null!;
         [Required]
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         [Required]
         public long TaxId { get; set; }
         [Required]

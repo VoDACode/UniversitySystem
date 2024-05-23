@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using University.API.Tools;
 using University.Application.Services;
 using University.Domain.Repositores;
 using University.Domain.Services;
@@ -47,5 +48,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    InsertData.InsertDataToDatabase(scope.ServiceProvider).Wait();
+}
 
 app.Run();

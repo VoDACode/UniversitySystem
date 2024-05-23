@@ -6,12 +6,12 @@ namespace University.Domain.Entity.User.Responses
     {
         public string Phone { get; set; } = null!;
         public long TaxId { get; set; }
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public DetailedUserResponse(UserEntity user) : base(user)
         {
             Phone = user.Phone;
             TaxId = user.TaxId;
-            DateOfBirth = user.DateOfBirth;
+            DateOfBirth = user.DateOfBirth.ToDateTime(TimeOnly.MinValue);
         }
 
         public static implicit operator DetailedUserResponse(UserEntity user)

@@ -112,6 +112,11 @@ namespace University.Infrastructure
                 .HasMany(ta => ta.Files)
                 .WithOne(f => f.TaskAnswer)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TaskEntity>()
+                .HasMany(t => t.TaskAnswers)
+                .WithOne(ta => ta.Task)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

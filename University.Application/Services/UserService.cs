@@ -20,17 +20,17 @@ namespace University.Application.Services
 
         public async Task<UserResponse> CreateUser(CreateUserRequest request)
         {
-            if(userRepository.GetUserByEmail(request.Email) != null)
+            if(await userRepository.GetUserByEmail(request.Email) != null)
             {
                 throw new BadRequestException("Email already exists");
             }
 
-            if (userRepository.GetUserByPhone(request.Phone) != null)
+            if (await userRepository.GetUserByPhone(request.Phone) != null)
             {
                 throw new BadRequestException("Phone already exists");
             }
 
-            if (userRepository.GetUserByTaxId(request.TaxId) != null)
+            if (await userRepository.GetUserByTaxId(request.TaxId) != null)
             {
                 throw new BadRequestException("TaxId already exists");
             }
@@ -39,7 +39,7 @@ namespace University.Application.Services
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                DateOfBirth = request.DateOfBirth,
+                DateOfBirth = DateOnly.FromDateTime(request.DateOfBirth),
                 TaxId = request.TaxId,
                 Email = request.Email,
                 Phone = request.Phone,
@@ -86,7 +86,7 @@ namespace University.Application.Services
 
         public async Task<UserResponse> UpdateUser(int id, UpdateUserRequest request)
         {
-            if(request.DateOfBirth > DateOnly.FromDateTime(DateTime.UtcNow))
+            if(request.DateOfBirth > DateTime.UtcNow)
             {
                 throw new BadRequestException("Date of birth cannot be in the future");
             }
@@ -99,7 +99,7 @@ namespace University.Application.Services
 
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
-            user.DateOfBirth = request.DateOfBirth;
+            user.DateOfBirth = DateOnly.FromDateTime(request.DateOfBirth);
             user.TaxId = request.TaxId;
             user.Email = request.Email;
             user.Phone = request.Phone;

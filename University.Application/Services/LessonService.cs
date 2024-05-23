@@ -53,7 +53,7 @@ namespace University.Application.Services
                 GroupId = request.GroupId,
                 CourseId = request.CourseId,
                 TeacherId = request.TeacherId,
-                Date = request.Date,
+                Date = DateOnly.FromDateTime(request.Date),
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
             };
@@ -117,7 +117,7 @@ namespace University.Application.Services
             lesson.Name = request.Name;
             lesson.Description = request.Description;
             lesson.TeacherId = request.TeacherId;
-            lesson.Date = request.Date;
+            lesson.Date = DateOnly.FromDateTime(request.Date);
             lesson.StartTime = request.StartTime;
             lesson.EndTime = request.EndTime;
 
