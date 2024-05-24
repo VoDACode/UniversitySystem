@@ -104,7 +104,7 @@ namespace University.API.Tools
             var groupRepository = serviceProvider.GetRequiredService<IGroupRepository>();
             var userRepository = serviceProvider.GetRequiredService<IUserRepository>();
 
-            int lastStudentId = 0;
+            int lastStudentId = 1;
 
             for (int i = 0; i < 10; i++)
             {

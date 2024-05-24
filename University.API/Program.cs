@@ -18,6 +18,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// add redis
+builder.Services.AddStackExchangeRedisCache(o =>
+{
+    o.Configuration = "localhost:6379";
+    o.InstanceName = "University";
+});
+
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
