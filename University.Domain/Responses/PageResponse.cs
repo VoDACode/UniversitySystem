@@ -5,8 +5,8 @@ namespace University.Domain.Responses
 {
     public class PageResponse<T>
     {
-        public IEnumerable<T> Items { get; set; }
-        public int TotalCount { get; set; }
+        public IEnumerable<T> Items { get; set; } = new List<T>();
+        public int TotalCount { get; set; } = 0;
         public int PageCount { get; set; } = 0;
         public int CurrentPage { get; set; } = 0;
 
@@ -25,6 +25,8 @@ namespace University.Domain.Responses
             PageCount = (int)Math.Ceiling(totalCount / 10.0);
             CurrentPage = pageRequest.Page;
         }
+
+        public PageResponse() { }
 
         public static async Task<PageResponse<T>> Create(IQueryable<T> source, PageRequest pageRequest)
         {

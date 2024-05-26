@@ -18,7 +18,7 @@ namespace University.Application.Services
 
         protected const string CacheEntryKeyFormat = "Course_{0}";
         protected const string CacheCourseGroupsKeyFormat = "CourseGroups_{0}";
-        protected const string CachePageKeyFormat = "Courses_{0}_{1}";
+        protected const string CachePageKeyFormat = "CoursePage_{0}";
 
         public CourseService(ICourseRepository courseRepository, IDistributedCache cache)
         {

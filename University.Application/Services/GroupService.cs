@@ -22,7 +22,7 @@ namespace University.Application.Services
         protected readonly IDistributedCache cache;
 
         protected const string CacheGroupKeyFormat = "Group_{0}";
-        protected const string CacheGroupsPageKeyFormat = "Group_{0}_{1}";
+        protected const string CacheGroupsPageKeyFormat = "GroupPage_{0}";
         protected const string CacheGroupCoursesKeyFormat = "GroupCourses_{0}";
         protected const string CacheGroupLessonsKeyFormat = "GroupLessons_{0}";
         protected const string CacheGroupTasksKeyFormat = "GroupTasks_{0}";

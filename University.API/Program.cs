@@ -56,9 +56,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    InsertData.InsertDataToDatabase(scope.ServiceProvider).Wait();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    InsertData.InsertDataToDatabase(scope.ServiceProvider).Wait();
+//}
 
 app.Run();
