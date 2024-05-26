@@ -22,14 +22,14 @@ namespace University.Domain.Responses
         {
             Items = items;
             TotalCount = totalCount;
-            PageCount = (int)Math.Ceiling(totalCount / (double)pageRequest.PageSize);
+            PageCount = (int)Math.Ceiling(totalCount / 10.0);
             CurrentPage = pageRequest.Page;
         }
 
         public static async Task<PageResponse<T>> Create(IQueryable<T> source, PageRequest pageRequest)
         {
             var totalCount = await source.CountAsync();
-            var items = await source.Skip(pageRequest.PageSize * (pageRequest.Page - 1)).Take(pageRequest.PageSize).ToListAsync();
+            var items = await source.Skip(10 * (pageRequest.Page - 1)).Take(10).ToListAsync();
             return new PageResponse<T>(items, totalCount, pageRequest);
         }
     }

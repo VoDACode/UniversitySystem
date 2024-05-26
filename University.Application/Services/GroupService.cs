@@ -1,4 +1,6 @@
-﻿using University.Domain.Entity.Course.Responses;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
+using University.Domain.Entity.Course.Responses;
 using University.Domain.Entity.Group;
 using University.Domain.Entity.Group.Requests;
 using University.Domain.Entity.Group.Responses;
@@ -17,11 +19,20 @@ namespace University.Application.Services
     {
         protected readonly IGroupRepository groupRepository;
         protected readonly IUserRepository userRepository;
+        protected readonly IDistributedCache cache;
 
-        public GroupService(IGroupRepository groupRepository, IUserRepository userRepository)
+        protected const string CacheGroupKeyFormat = "Group_{0}";
+        protected const string CacheGroupsPageKeyFormat = "Group_{0}_{1}";
+        protected const string CacheGroupCoursesKeyFormat = "GroupCourses_{0}";
+        protected const string CacheGroupLessonsKeyFormat = "GroupLessons_{0}";
+        protected const string CacheGroupTasksKeyFormat = "GroupTasks_{0}";
+        protected const string CacheGroupStudentsKeyFormat = "GroupStudents_{0}";
+
+        public GroupService(IGroupRepository groupRepository, IUserRepository userRepository, IDistributedCache cache)
         {
             this.groupRepository = groupRepository;
             this.userRepository = userRepository;
+            this.cache = cache;
         }
 
         public async Task<GroupResponse> CreateGroup(CreateGroupRequest request)
@@ -52,69 +63,182 @@ namespace University.Application.Services
             }
 
             await groupRepository.DeleteGroup(id);
+
+            await cache.RemoveAsync(string.Format(CacheGroupKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupStudentsKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupCoursesKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupLessonsKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupTasksKeyFormat, id));
         }
 
         public async Task<IList<CourseResponse>> GetCoursesFromGroup(int id)
         {
+            var cacheGroup = await cache.GetStringAsync(string.Format(CacheGroupCoursesKeyFormat, id));
+            if (cacheGroup != null)
+            {
+                var courseResponse = JsonSerializer.Deserialize<IList<CourseResponse>>(cacheGroup);
+                if (courseResponse != null)
+                {
+                    return courseResponse;
+                }
+                await cache.RemoveAsync(string.Format(CacheGroupCoursesKeyFormat, id));
+            }
+
             var group = await groupRepository.GetCoursesFromGroup(id);
             if (group == null)
             {
-                throw new NotFoundException("Group not found");
+                throw new NotFoundException("Course not found");
             }
 
-            return group.Courses.Select(course => new CourseResponse(course)).ToList();
+            IList<CourseResponse> response = group.Courses.Select(course => new CourseResponse(course)).ToList();
+            await cache.SetStringAsync(string.Format(CacheGroupCoursesKeyFormat, id), JsonSerializer.Serialize(response), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+
+            return response;
         }
 
         public async Task<GroupResponse> GetGroup(int id)
         {
+            var cacheGroup = await cache.GetStringAsync(string.Format(CacheGroupKeyFormat, id));
+            if (cacheGroup != null)
+            {
+                var courseResponse = JsonSerializer.Deserialize<GroupResponse>(cacheGroup);
+                if (courseResponse != null)
+                {
+                    return courseResponse;
+                }
+                await cache.RemoveAsync(string.Format(CacheGroupKeyFormat, id));
+            }
+
             var group = await groupRepository.GetGroupById(id);
             if (group == null)
             {
-                throw new NotFoundException("Group not found");
+                throw new NotFoundException("Course not found");
             }
 
-            return group;
+            GroupResponse response = group;
+            await cache.SetStringAsync(string.Format(CacheGroupKeyFormat, id), JsonSerializer.Serialize(response), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+
+            return response;
         }
 
         public async Task<PageResponse<GroupResponse>> GetGroups(PageRequest request)
         {
+            PageResponse<GroupResponse>? pageResponse;
+
+            var cacheResponse = await cache.GetStringAsync(string.Format(CacheGroupsPageKeyFormat, request.Page));
+            if (cacheResponse != null)
+            {
+                pageResponse = JsonSerializer.Deserialize<PageResponse<GroupResponse>>(cacheResponse);
+                if (pageResponse != null)
+                {
+                    return pageResponse;
+                }
+                await cache.RemoveAsync(string.Format(CacheGroupsPageKeyFormat, request.Page));
+            }
+
             IQueryable<GroupEntity> groups = await groupRepository.GetGroups();
             IQueryable<GroupResponse> groupsResponse = groups.Select(group => new GroupResponse(group));
 
-            return await PageResponse<GroupResponse>.Create(groupsResponse, request);
+            pageResponse = await PageResponse<GroupResponse>.Create(groupsResponse, request);
+            if (pageResponse.Items.Any())
+            {
+                await cache.SetStringAsync(string.Format(CacheGroupsPageKeyFormat, request.Page), JsonSerializer.Serialize(pageResponse), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+            }
+
+            return pageResponse;
         }
 
         public async Task<IList<LessonResponse>> GetLessonsFromGroup(int id)
         {
+            var cacheGroup = await cache.GetStringAsync(string.Format(CacheGroupLessonsKeyFormat, id));
+            if (cacheGroup != null)
+            {
+                var courseResponse = JsonSerializer.Deserialize<IList<LessonResponse>>(cacheGroup);
+                if (courseResponse != null)
+                {
+                    return courseResponse;
+                }
+                await cache.RemoveAsync(string.Format(CacheGroupLessonsKeyFormat, id));
+            }
+
             var group = await groupRepository.GetLessonsFromGroup(id);
             if (group == null)
             {
-                throw new NotFoundException("Group not found");
+                throw new NotFoundException("Course not found");
             }
 
-            return group.Lessons.Select(lesson => new LessonResponse(lesson)).ToList();
+            IList<LessonResponse> response = group.Lessons.Select(course => new LessonResponse(course)).ToList();
+            await cache.SetStringAsync(string.Format(CacheGroupLessonsKeyFormat, id), JsonSerializer.Serialize(response), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+
+            return response;
         }
 
         public async Task<IList<UserResponse>> GetStudentsFromGroup(int id)
         {
+            var cacheGroup = await cache.GetStringAsync(string.Format(CacheGroupStudentsKeyFormat, id));
+            if (cacheGroup != null)
+            {
+                var courseResponse = JsonSerializer.Deserialize<IList<UserResponse>>(cacheGroup);
+                if (courseResponse != null)
+                {
+                    return courseResponse;
+                }
+                await cache.RemoveAsync(string.Format(CacheGroupStudentsKeyFormat, id));
+            }
+
             var group = await groupRepository.GetStudentsFromGroup(id);
             if (group == null)
             {
-                throw new NotFoundException("Group not found");
+                throw new NotFoundException("Course not found");
             }
 
-            return group.Students.Select(student => new UserResponse(student)).ToList();
+            IList<UserResponse> response = group.Students.Select(course => new UserResponse(course)).ToList();
+            await cache.SetStringAsync(string.Format(CacheGroupStudentsKeyFormat, id), JsonSerializer.Serialize(response), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+
+            return response;
         }
 
         public async Task<IList<TaskResponse>> GetTasksFromGroup(int id)
         {
+            var cacheGroup = await cache.GetStringAsync(string.Format(CacheGroupTasksKeyFormat, id));
+            if (cacheGroup != null)
+            {
+                var courseResponse = JsonSerializer.Deserialize<IList<TaskResponse>>(cacheGroup);
+                if (courseResponse != null)
+                {
+                    return courseResponse;
+                }
+                await cache.RemoveAsync(string.Format(CacheGroupTasksKeyFormat, id));
+            }
+
             var group = await groupRepository.GetTasksFromGroup(id);
             if (group == null)
             {
-                throw new NotFoundException("Group not found");
+                throw new NotFoundException("Course not found");
             }
 
-            return group.Tasks.Select(task => new TaskResponse(task)).ToList();
+            IList<TaskResponse> response = group.Tasks.Select(course => new TaskResponse(course)).ToList();
+            await cache.SetStringAsync(string.Format(CacheGroupTasksKeyFormat, id), JsonSerializer.Serialize(response), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+
+            return response;
         }
 
         public async Task<GroupResponse> UpdateGroup(int id, UpdateGroupRequest request)
@@ -129,6 +253,12 @@ namespace University.Application.Services
             group.IsSubGroup = request.IsSubGroup;
 
             group = await groupRepository.UpdateGroup(group);
+
+            await cache.RemoveAsync(string.Format(CacheGroupKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupStudentsKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupCoursesKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupLessonsKeyFormat, id));
+            await cache.RemoveAsync(string.Format(CacheGroupTasksKeyFormat, id));
 
             return group;
         }
