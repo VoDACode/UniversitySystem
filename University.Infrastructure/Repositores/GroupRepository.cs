@@ -23,10 +23,40 @@ namespace University.Infrastructure.Repositores
 
         public async Task DeleteGroup(int id)
         {
-            var group = await context.Groups.FindAsync(id);
-            if (group == null) throw new NotFoundException("Group not found");
-            context.Groups.Remove(group);
-            await context.SaveChangesAsync();
+            var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var group = await context.Groups
+                    .Include(x => x.Lessons)
+                    .Include(x => x.Tasks).ThenInclude(x => x.TaskAnswers).ThenInclude(x => x.Files)
+                    .FirstOrDefaultAsync(x => x.Id == id);
+                if (group == null) throw new NotFoundException("Group not found");
+
+                context.Lessons.RemoveRange(group.Lessons);
+                await context.SaveChangesAsync();
+
+                context.Files.RemoveRange(group.Tasks.SelectMany(x => x.TaskAnswers).SelectMany(x => x.Files));
+                await context.SaveChangesAsync();
+
+                context.TaskAnswers.RemoveRange(group.Tasks.SelectMany(x => x.TaskAnswers));
+                await context.SaveChangesAsync();
+
+                context.Tasks.RemoveRange(group.Tasks);
+                await context.SaveChangesAsync();
+
+                group.Students.Clear();
+                await context.SaveChangesAsync();
+
+                context.Groups.Remove(group);
+                await context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> ExistsById(int id)

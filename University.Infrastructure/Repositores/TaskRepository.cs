@@ -7,11 +7,13 @@ namespace University.Infrastructure.Repositores
 {
     public class TaskRepository : ITaskRepository
     {
+        protected readonly ITaskAnswerRepository taskAnswerRepository;
         protected readonly UniversityDbContext context;
 
-        public TaskRepository(UniversityDbContext context)
+        public TaskRepository(UniversityDbContext context, ITaskAnswerRepository taskAnswerRepository)
         {
             this.context = context;
+            this.taskAnswerRepository = taskAnswerRepository;
         }
 
         public async Task<TaskEntity> CreateTask(TaskEntity task)
@@ -24,10 +26,30 @@ namespace University.Infrastructure.Repositores
 
         public async Task DeleteTask(int id)
         {
-            var task = await context.Tasks.FindAsync(id);
-            if (task == null) throw new NotFoundException("Task not found");
-            context.Tasks.Remove(task);
-            await context.SaveChangesAsync();
+            var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var task = await context.Tasks
+                    .Include(t => t.TaskAnswers).ThenInclude(ta => ta.Files)
+                    .FirstOrDefaultAsync(t => t.Id == id);
+                if (task == null) throw new NotFoundException("Task not found");
+
+                context.Files.RemoveRange(task.TaskAnswers.SelectMany(ta => ta.Files));
+                await context.SaveChangesAsync();
+
+                context.TaskAnswers.RemoveRange(task.TaskAnswers);
+                await context.SaveChangesAsync();
+
+                context.Tasks.Remove(task);
+                await context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> ExistById(int id)

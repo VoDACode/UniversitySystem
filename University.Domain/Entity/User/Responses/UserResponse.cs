@@ -1,6 +1,4 @@
-﻿using University.Domain.Entity.User;
-
-namespace University.Domain.Entity.User.Responses
+﻿namespace University.Domain.Entity.User.Responses
 {
     public class UserResponse
     {
@@ -9,6 +7,9 @@ namespace University.Domain.Entity.User.Responses
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
+        public bool IsDeleted { get; set; } = false;
+        public string FullName => $"{FirstName} {LastName}";
+        public string ShortName => $"{FirstName[0]}. {LastName}";
 
         public UserResponse(UserEntity user)
         {
@@ -16,7 +17,7 @@ namespace University.Domain.Entity.User.Responses
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
-            RoleName = user.Role.ToString();
+            IsDeleted = user.IsDeleted;
         }
 
         public UserResponse()

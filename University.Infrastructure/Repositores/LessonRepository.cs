@@ -23,10 +23,22 @@ namespace University.Infrastructure.Repositores
 
         public async Task DeleteLesson(int id)
         {
-            var lesson = await context.Lessons.FindAsync(id);
-            if (lesson == null) throw new NotFoundException("Lesson not found");
-            context.Lessons.Remove(lesson);
-            await context.SaveChangesAsync();
+            var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var lesson = await context.Lessons
+                    .FirstOrDefaultAsync(lesson => lesson.Id == id);
+                if (lesson == null) throw new NotFoundException("Lesson not found");
+
+                context.Lessons.Remove(lesson);
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> ExistsById(int id)

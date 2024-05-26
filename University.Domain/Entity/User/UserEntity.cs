@@ -27,8 +27,7 @@ namespace University.Domain.Entity.User
         [Required]
         [Phone]
         public string Phone { get; set; } = null!;
-        [Required]
-        public UserRole Role { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         public ICollection<GroupEntity> Groups { get; set; } = new List<GroupEntity>();
         public ICollection<GroupEntity> TeachGroups { get; set; } = new List<GroupEntity>();

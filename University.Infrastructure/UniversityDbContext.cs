@@ -26,16 +26,6 @@ namespace University.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserEntity>()
-                .HasIndex(u => u.TaxId)
-                .IsUnique();
-            modelBuilder.Entity<UserEntity>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
-            modelBuilder.Entity<UserEntity>()
-                .HasIndex(u => u.Phone)
-                .IsUnique();
-
             modelBuilder.Entity<GroupEntity>()
                 .HasIndex(g => g.Name)
                 .IsUnique();

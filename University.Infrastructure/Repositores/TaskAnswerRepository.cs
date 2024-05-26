@@ -23,10 +23,27 @@ namespace University.Infrastructure.Repositores
 
         public async Task DeleteTaskAnswer(int id)
         {
-            var taskAnswer = await context.TaskAnswers.FindAsync(id);
-            if (taskAnswer == null) throw new NotFoundException("TaskAnswer not found");
-            context.TaskAnswers.Remove(taskAnswer);
-            await context.SaveChangesAsync();
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var taskAnswer = await context.TaskAnswers
+                    .Include(p => p.Files)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if (taskAnswer == null) throw new NotFoundException("TaskAnswer not found");
+                
+                context.Files.RemoveRange(taskAnswer.Files);
+                await context.SaveChangesAsync();
+
+                context.TaskAnswers.Remove(taskAnswer);
+                await context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> ExistsById(int id)

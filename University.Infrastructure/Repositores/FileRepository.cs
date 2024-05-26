@@ -23,10 +23,21 @@ namespace University.Infrastructure.Repositores
 
         public async Task DeleteFile(long id)
         {
-            var file = await context.Files.FindAsync(id);
-            if (file == null) throw new NotFoundException("File not found");
-            context.Files.Remove(file);
-            await context.SaveChangesAsync();
+            var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                var file = await context.Files.FindAsync(id);
+                if (file == null) throw new NotFoundException("File not found");
+
+                context.Files.Remove(file);
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> ExistsById(long id)

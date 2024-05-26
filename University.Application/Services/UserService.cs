@@ -42,8 +42,7 @@ namespace University.Application.Services
                 DateOfBirth = DateOnly.FromDateTime(request.DateOfBirth),
                 TaxId = request.TaxId,
                 Email = request.Email,
-                Phone = request.Phone,
-                Role = request.Role
+                Phone = request.Phone
             };
 
             return await userRepository.CreateUser(user);
@@ -70,10 +69,6 @@ namespace University.Application.Services
 
         public async Task<UserResponse> GetUserById(int id)
         {
-            if (!await userRepository.ExistsById(id))
-            {
-                throw new NotFoundException("User not found");
-            }
             return await userRepository.GetUserById(id) ?? throw new NotFoundException("User not found");
         }
 
@@ -103,7 +98,6 @@ namespace University.Application.Services
             user.TaxId = request.TaxId;
             user.Email = request.Email;
             user.Phone = request.Phone;
-            user.Role = request.Role;
 
             return await userRepository.UpdateUser(user);
         }
